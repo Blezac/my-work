@@ -1,0 +1,36 @@
+# /var/www/html/belzac-digital/.htaccess
+# Belzac Digital - Apache Rewrite and Security Rules
+
+Options -Indexes
+
+# Enable rewrite engine
+RewriteEngine On
+
+# Force trailing slash removal
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)/$ /$1 [R=301,L]
+
+# Block access to includes directory
+RewriteRule ^includes/ - [F,L]
+
+# Block access to hidden files (.git, .env, etc.)
+RewriteRule (^|/)\.(?!well-known) - [F,L]
+
+# Security headers
+<IfModule mod_headers.c>
+    Header always set X-Frame-Options "SAMEORIGIN"
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set X-XSS-Protection "1; mode=block"
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>
+
+# Cache static assets
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresByType text/css "access plus 1 month"
+    ExpiresByType application/javascript "access plus 1 month"
+    ExpiresByType image/png "access plus 1 month"
+    ExpiresByType image/jpeg "access plus 1 month"
+    ExpiresByType image/svg+xml "access plus 1 month"
+    ExpiresByType image/x-icon "access plus 1 year"
+</IfModule>

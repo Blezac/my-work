@@ -1,0 +1,203 @@
+<?php
+
+require_once 'includes/config.php';
+
+$error = '';
+$success = '';
+
+// Handle form submission
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Sanitize inputs
+    $service = sanitizeInput($_POST['service'] ?? '');
+    $customer_name = sanitizeInput($_POST['customer_name'] ?? '');
+    $phone = sanitizeInput($_POST['phone'] ?? '');
+    $email = sanitizeInput($_POST['email'] ?? '');
+    $message = sanitizeInput($_POST['message'] ?? '');
+    
+    // Validation
+    if (empty($service) || empty($customer_name) || empty($phone) || empty($message)) {
+        $error = 'Please fill in all required fields.';
+    } elseif (!in_array($service, ['Education', 'IT Services', 'CLACS-Farm', 'Automobile'])) {
+        $error = 'Invalid service selected.';
+    } elseif (!validatePhone($phone)) {
+        $error = 'Please enter a valid phone number.';
+    } elseif (!empty($email) && !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $error = 'Please enter a valid email address.';
+    } else {
+        // Create ticket
+        $result = createTicket($service, $customer_name, $phone, $email, 'Customer', $message);
+        
+        if ($result['success']) {
+            $ticket_code = $result['ticket_code'];
+            
+            // Format phone for WhatsApp
+            $wa_phone = formatPhoneForWhatsApp($phone);
+            
+            // Create WhatsApp message
+            $wa_message = "Hello! I'm contacting you regarding my support request.\n\n";
+            $wa_message .= " Ticket ID: " . $ticket_code . "\n";
+            $wa_message .= " Name: " . $customer_name . "\n";
+            $wa_message .= " Service: " . $service . "\n\n";
+            $wa_message .= " Message:\n" . $message;
+            
+            // URL encode the message
+            $wa_message_encoded = urlencode($wa_message);
+            
+            // Redirect to WhatsApp
+            $whatsapp_url = "https://wa.me/" . COMPANY_WHATSAPP . "?text=" . $wa_message_encoded;
+            
+            header("Location: " . $whatsapp_url);
+            exit;
+        } else {
+            $error = $result['error'] ?? 'Failed to create ticket. Please try again.';
+        }
+    }
+}
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Support - Greendome Engineering</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+    <div class="header">
+        <h1><i class="fas fa-seedling"></i> Greendome Engineering</h1>
+        <p>Technology & Science</p>
+        <p class="tagline">Engineering Technology, Science & Innovation — Empowering Growth Through Education, Technology, Agriculture & Automotive Excellence</p>
+    </div>
+
+    <div class="container">
+        <div class="card">
+            <h2 class="card-title">Start Support Request</h2>
+            
+            <?php if ($error): ?>
+                <div class="alert alert-error">
+                    <?php echo $error; ?>
+                </div>
+            <?php endif; ?>
+            
+            <?php if ($success): ?>
+                <div class="alert alert-success">
+                     <?php echo $success; ?>
+                </div>
+            <?php endif; ?>
+            
+            <form method="POST" action="" id="supportForm">
+                <div class="form-group">
+                    <label for="service" class="required">Select Service</label>
+                    <select name="service" id="service" required>
+                        <option value="">-- Choose Service --</option>
+                        <option value="Education" <?php echo (isset($_POST['service']) && $_POST['service'] === 'Education') ? 'selected' : ''; ?>>
+                            <i class="fas fa-book"></i> Education
+                        </option>
+                        <option value="IT Services" <?php echo (isset($_POST['service']) && $_POST['service'] === 'IT Services') ? 'selected' : ''; ?>>
+                            <i class="fas fa-laptop"></i> IT Services
+                        </option>
+                        <option value="CLACS-Farm" <?php echo (isset($_POST['service']) && $_POST['service'] === 'CLACS-Farm') ? 'selected' : ''; ?>>
+                            <i class="fas fa-tractor"></i> CLACS-Farm
+                        </option>
+                        <option value="Automobile" <?php echo (isset($_POST['service']) && $_POST['service'] === 'Automobile') ? 'selected' : ''; ?>>
+                            <i class="fas fa-car"></i> Automobile
+                        </option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="customer_name" class="required">Full Name</label>
+                    <input 
+                        type="text" 
+                        name="customer_name" 
+                        id="customer_name" 
+                        placeholder="Enter your full name"
+                        value="<?php echo isset($_POST['customer_name']) ? htmlspecialchars($_POST['customer_name']) : ''; ?>"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="phone" class="required">WhatsApp Number</label>
+                    <input 
+                        type="tel" 
+                        name="phone" 
+                        id="phone" 
+                        placeholder="e.g., 09012345678"
+                        value="<?php echo isset($_POST['phone']) ? htmlspecialchars($_POST['phone']) : ''; ?>"
+                        required
+                    >
+                    <small style="color: #7f8c8d; font-size: 12px; display: block; margin-top: 5px;">
+                        Enter your WhatsApp number (we'll redirect you to WhatsApp)
+                    </small>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email Address (Optional)</label>
+                    <input 
+                        type="email" 
+                        name="email" 
+                        id="email" 
+                        placeholder="your.email@example.com"
+                        value="<?php echo isset($_POST['email']) ? htmlspecialchars($_POST['email']) : ''; ?>"
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="message" class="required">Your Message</label>
+                    <textarea 
+                        name="message" 
+                        id="message" 
+                        placeholder="Describe your inquiry or issue..."
+                        required
+                    ><?php echo isset($_POST['message']) ? htmlspecialchars($_POST['message']) : ''; ?></textarea>
+                </div>
+
+                <button type="submit" class="btn btn-primary">
+                    <i class="fab fa-whatsapp"></i> Start Support on WhatsApp
+                </button>
+            </form>
+        </div>
+
+        <div class="card">
+            <h3 style="font-size: 16px; margin-bottom: 15px; color: #2c5f2d;">
+                 How It Works
+            </h3>
+            <ol style="padding-left: 20px; color: #7f8c8d; font-size: 14px; line-height: 1.8;">
+                <li>Fill in the form above with your details</li>
+                <li>Click "Start Support on WhatsApp"</li>
+                <li>You'll receive a unique Ticket ID</li>
+                <li>You'll be redirected to our WhatsApp</li>
+                <li>Continue the conversation on WhatsApp</li>
+                <li>All messages are tracked under your Ticket ID</li>
+            </ol>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>&copy; <?php echo date('Y'); ?> Greendome Engineering Technology & Science</p>
+        <p style="font-size: 11px; margin-top: 5px;">All rights reserved</p>
+    </div>
+
+    <script>
+        // Simple form validation
+        document.getElementById('supportForm').addEventListener('submit', function(e) {
+            const phone = document.getElementById('phone').value.trim();
+            const message = document.getElementById('message').value.trim();
+            
+            if (phone.length < 10) {
+                e.preventDefault();
+                alert('Please enter a valid phone number (at least 11 digits)');
+                return false;
+            }
+            
+            if (message.length < 10) {
+                e.preventDefault();
+                alert('Please provide more details in your message (at least 5 characters)');
+                return false;
+            }
+        });
+    </script>
+</body>
+</html>

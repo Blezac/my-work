@@ -1,0 +1,64 @@
+<?php
+/**
+ * Database Configuration
+ * Greendome Engineering Ticketing System
+ */
+
+// Database credentials
+define('DB_HOST', 'localhost');
+define('DB_NAME', 'belzac_tickets');
+define('DB_USER', 'belzac_user');
+define('DB_PASS', 'Belzac2026.2');
+define('DB_CHARSET', 'utf8mb4');
+
+// WhatsApp Business API Configuration
+define('WHATSAPP_API_URL', 'https://graph.facebook.com/v18.0');
+define('WHATSAPP_PHONE_NUMBER_ID', 'your_phone_number_id');
+define('WHATSAPP_ACCESS_TOKEN', 'your_access_token');
+define('WHATSAPP_VERIFY_TOKEN', 'your_webhook_verify_token');
+
+// Application settings
+define('APP_NAME', 'Greendome Engineering');
+define('APP_URL', 'https://greendome.com');
+define('SUPPORT_EMAIL', 'support@greendome.com');
+define('TIMEZONE', 'Africa/Lagos');
+
+// Session settings
+define('SESSION_LIFETIME', 7200); // 2 hours
+define('SESSION_NAME', 'GD_ADMIN_SESSION');
+
+// Security
+define('ENCRYPTION_KEY', 'change_this_to_random_32_char_key');
+
+// Set timezone
+date_default_timezone_set(TIMEZONE);
+
+// Database connection function
+function getDBConnection() {
+    static $pdo = null;
+    
+    if ($pdo === null) {
+        try {
+            $dsn = "mysql:host=" . DB_HOST . ";dbname=" . DB_NAME . ";charset=" . DB_CHARSET;
+            $options = [
+                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+                PDO::ATTR_EMULATE_PREPARES => false,
+                PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci"
+            ];
+            
+            $pdo = new PDO($dsn, DB_USER, DB_PASS, $options);
+        } catch (PDOException $e) {
+            error_log("Database connection failed: " . $e->getMessage());
+            die("Database connection failed. Please contact support.");
+        }
+    }
+    
+    return $pdo;
+}
+
+// Error reporting (disable in production)
+error_reporting(E_ALL);
+ini_set('display_errors', '0');
+ini_set('log_errors', '1');
+ini_set('error_log', __DIR__ . '/../logs/php_errors.log');

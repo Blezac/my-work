@@ -1,0 +1,239 @@
+/* ============================================
+   GLOW BY NARA - Custom Styles
+   ============================================ */
+
+/* Section Divider */
+.section-divider {
+    width: 40px;
+    height: 2px;
+    background: #1F7A5A;
+    margin: 1rem auto;
+}
+
+/* Hero gradient overlay */
+.hero-overlay {
+    background: linear-gradient(135deg, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.2) 60%, transparent 100%);
+}
+
+/* Product Card Glow */
+.product-card:hover .add-to-cart-btn {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.add-to-cart-btn {
+    opacity: 0;
+    transform: translateY(10px);
+    transition: all 0.3s ease;
+}
+
+/* Testimonial Card */
+.testimonial-card {
+    position: relative;
+}
+.testimonial-card::before {
+    content: '"';
+    position: absolute;
+    top: -10px;
+    left: 20px;
+    font-size: 5rem;
+    color: #1F7A5A;
+    opacity: 0.15;
+    font-family: 'Playfair Display', serif;
+    line-height: 1;
+}
+
+/* Tag Badge */
+.badge-new {
+    background: #1F7A5A;
+    color: white;
+    font-size: 0.65rem;
+    padding: 0.2rem 0.6rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-weight: 600;
+}
+
+.badge-sale {
+    background: #c0392b;
+    color: white;
+    font-size: 0.65rem;
+    padding: 0.2rem 0.6rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-weight: 600;
+}
+
+/* Input Styles */
+.form-input {
+    width: 100%;
+    border: 1px solid #e5e7eb;
+    padding: 0.75rem 1rem;
+    font-size: 0.875rem;
+    outline: none;
+    transition: border-color 0.2s ease;
+    border-radius: 0;
+    background: white;
+}
+
+.form-input:focus {
+    border-color: #1F7A5A;
+}
+
+/* Blog Card */
+.blog-card:hover .blog-image {
+    transform: scale(1.05);
+}
+
+.blog-image {
+    transition: transform 0.5s ease;
+}
+
+/* Green gradient section */
+.gradient-green {
+    background: linear-gradient(135deg, #145A41 0%, #1F7A5A 50%, #2a9972 100%);
+}
+
+/* Benefit Icon Circles */
+.benefit-icon {
+    width: 64px;
+    height: 64px;
+    border: 1px solid #e5e7eb;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1rem;
+    border-radius: 50%;
+    background: #FAF8F4;
+    transition: all 0.3s ease;
+}
+
+.benefit-item:hover .benefit-icon {
+    background: #1F7A5A;
+    border-color: #1F7A5A;
+    color: white;
+}
+
+.benefit-item:hover .benefit-icon i {
+    color: white;
+}
+
+/* Progress Bar for reviews */
+.review-bar {
+    height: 6px;
+    background: #e5e7eb;
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.review-bar-fill {
+    height: 100%;
+    background: #1F7A5A;
+    border-radius: 3px;
+    transition: width 1s ease;
+}
+
+/* Table Striped */
+.table-row:nth-child(even) {
+    background: #FAF8F4;
+}
+
+/* Quantity Input */
+.qty-input {
+    width: 50px;
+    text-align: center;
+    border: 1px solid #e5e7eb;
+    padding: 0.4rem;
+    outline: none;
+    font-size: 0.875rem;
+}
+
+/* FAQ Accordion */
+.faq-answer {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease, padding 0.3s ease;
+}
+
+.faq-answer.open {
+    max-height: 300px;
+}
+
+/* Back to top */
+#backToTop {
+    position: fixed;
+    bottom: 2rem;
+    left: 2rem;
+    width: 40px;
+    height: 40px;
+    background: #1F7A5A;
+    color: white;
+    border: none;
+    cursor: pointer;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 999;
+    font-size: 0.9rem;
+    transition: background 0.2s;
+}
+
+#backToTop:hover {
+    background: #145A41;
+}
+
+#backToTop.visible {
+    display: flex;
+}
+
+/* Responsive images */
+.img-cover {
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
+}
+
+/* WhatsApp Float */
+.whatsapp-float {
+    position: fixed;
+    bottom: 5rem;
+    right: 2rem;
+    width: 48px;
+    height: 48px;
+    background: #25D366;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.4rem;
+    z-index: 999;
+    box-shadow: 0 4px 15px rgba(37,211,102,0.4);
+    transition: transform 0.2s;
+}
+
+.whatsapp-float:hover {
+    transform: scale(1.1);
+}
+
+/* Loading Spinner */
+.spinner {
+    width: 20px;
+    height: 20px;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    display: inline-block;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Breadcrumb */
+.breadcrumb-item + .breadcrumb-item::before {
+    content: '/';
+    margin: 0 0.5rem;
+    color: #9ca3af;
+}

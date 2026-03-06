@@ -1,0 +1,2 @@
+[2026-02-12 09:16:28] [info] {"action":"incoming_message","data":{"entry":[{"changes":[{"value":{"messages":[{"from":"2349012345678","type":"text","text":{"body":"Hello! This is a test message for Ticket ID: GETS-000001. Please help me with my inquiry."}}],"contacts":[{"profile":{"name":"Test User"},"wa_id":"2349012345678"}]}}]}]}}
+[2026-02-12 09:16:29] [warning] {"action":"ticket_not_found","ticket_code":"GETS-000001","from":"2349012345678"}
